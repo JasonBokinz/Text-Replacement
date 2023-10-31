@@ -34,15 +34,21 @@ int findBeginning(char* tmp, char* pos) {
 }
 bool checkIsEnding(char* tmp, char* pos, char* word) {
     pos += strlen(word) - 1;
-    if (*pos+1 != '\0') {
-        return isspace(*pos + 1) || ispunct(*pos + 1);
+    if (*(pos+1) != '\0') {
+        printf("\ncheckIsEnding:\n");
+        printf("pos=%c\n", *pos);
+        printf("pos+1=%c\n\n", *(pos+1));
+        return isspace(*(pos+1)) || ispunct(*(pos+1));
     } else {
         return true;
     }
 }
 bool checkIsBeginning(char* tmp, char* pos) {
         if (pos - 1 >= tmp) {
-            return isspace(*pos - 1) || ispunct(*pos - 1);
+            printf("\ncheckIsBeginning:\n");
+            printf("pos=%c\n", *pos);
+            printf("pos-1=%c\n\n", *(pos-1));
+            return isspace(*(pos-1)) || ispunct(*(pos-1));
         } else {
             return true;
         }
@@ -177,28 +183,47 @@ int main(int argc, char *argv[]) {
         char *pos, *tmp = line;
         if (curr_line >= start_line) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
-                //fprintf(stderr,"%c\n", *pos);
+                fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
+                fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
                 size_t n = pos - tmp;
                 char *current;
                 int length = 0;
+                bool isValid = true;
                 if (beginWith || endWith) {
-                    if (!checkIsEnding(tmp, pos, search_text) || !checkIsBeginning(tmp, pos)) {
-                        tmp = pos + search_len;
-                        fprintf(stderr, "in this block\n");
-                        continue;
+                    if (endWith && !checkIsEnding(tmp, pos, search_text)) {
+                        n += search_len;
+                        isValid = false;
+                        fprintf(stderr, "\ntmp=%c\n", *tmp);
+                        fprintf(stderr, "Not valid ending\n");
+                    } else if (beginWith && !checkIsBeginning(tmp, pos)) {
+                        n += search_len;
+                        isValid = false;
+                        fprintf(stderr, "\ntmp=%c\n", *tmp);
+                        fprintf(stderr, "Not valid beginning\n");
                     }
-                    if (endWith) {
+                    else if (endWith && checkIsEnding(tmp, pos, search_text)) {
                         n -= findBeginning(tmp, pos);
                     }
+                    fprintf(stderr, "Valid Wildcard\n");
+                    fprintf(stderr, "tmp to n: |");
+                    fwrite(tmp, 1, n, stderr);
+                    fprintf(stderr, "|\n");
                     fwrite(tmp, 1, n, outfile);
-                    current = &line[n];
-                    fprintf(stderr,"%c\n", *current);
-                    while (((*current != '\0') && (!isspace(*current))) || (!ispunct(*current))) {
+                    current = pos;
+                    fprintf(stderr, "\ncharacters when looking for length: ");
+                    while (*current != '\0' && !isspace(*current) && !ispunct(*current)) {
+                        fprintf(stderr,"%c", *current);
                         current++;
                         length++;
                     }
-                    fwrite(replace_text, 1, strlen(replace_text), outfile);
-                    tmp = pos + length;
+                    fprintf(stderr, "|\n");
+                    fprintf(stderr, "length:%d\n", length);
+                    if (isValid) {
+                        fwrite(replace_text, 1, strlen(replace_text), outfile);
+                        tmp = pos + length;
+                    } else {
+                        tmp = pos + search_len;
+                    }
                 } else {
                     fwrite(tmp, 1, n, outfile);
                     fwrite(replace_text, 1, strlen(replace_text), outfile);

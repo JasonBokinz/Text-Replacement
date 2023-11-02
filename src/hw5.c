@@ -178,22 +178,20 @@ int main(int argc, char *argv[]) {
                     }
                     /* Write into file until point of the beginning of search_text. */
                     fwrite(tmp, 1, n, outfile);
-                    char *current = pos;
-                    while (*current != '\0' && !isspace(*current) && !ispunct(*current)) {
-                        current++;
-                        length++;
-                    }
                     if (isValid) {
+                        char *curr_char = pos;
+                        while (*curr_char != '\0' && !isspace(*curr_char) && !ispunct(*curr_char)) {
+                            curr_char++;
+                            length++;
+                        }
                         fwrite(replace_text, 1, strlen(replace_text), outfile);
-                        tmp = pos + length;
-                    } else {
-                        tmp = pos + search_len;
+                        search_len = length;
                     }
                 } else {
                     fwrite(tmp, 1, n, outfile);
                     fwrite(replace_text, 1, strlen(replace_text), outfile);
-                    tmp = pos + search_len;
                 }
+                tmp = pos + search_len;
             }
             /* Write in the rest of the line into the file. */
             fwrite(tmp, 1, strlen(tmp), outfile);

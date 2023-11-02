@@ -172,8 +172,7 @@ int main(int argc, char *argv[]) {
                     if ((endWith && !checkIsEnding(pos, search_text)) || (beginWith && !checkIsBeginning(tmp, pos))) {
                         n += search_len;
                         isValid = false;
-                    }
-                    else if (endWith && checkIsEnding(pos, search_text)) {
+                    } else if (endWith && checkIsEnding(pos, search_text)) {
                         n -= findBeginning(tmp, pos);
                     }
                     /* Write into file until point of the beginning of search_text. */
@@ -185,13 +184,15 @@ int main(int argc, char *argv[]) {
                             length++;
                         }
                         fwrite(replace_text, 1, strlen(replace_text), outfile);
-                        search_len = length;
+                        tmp = pos + length;
+                    } else {
+                        tmp = pos + search_len;
                     }
                 } else {
                     fwrite(tmp, 1, n, outfile);
                     fwrite(replace_text, 1, strlen(replace_text), outfile);
+                    tmp = pos + search_len;
                 }
-                tmp = pos + search_len;
             }
             /* Write in the rest of the line into the file. */
             fwrite(tmp, 1, strlen(tmp), outfile);

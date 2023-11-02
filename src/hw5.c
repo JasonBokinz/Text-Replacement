@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
                 }
                 char *ptr;
                 start_line = strtol(startStr, &ptr, 10);
-                end_line = atoi(endStr, &ptr, 10);
+                end_line = strol(endStr, &ptr, 10);
                 hasLine = true;
                 if (end_line < start_line) {
                     priorityError[6] = true;

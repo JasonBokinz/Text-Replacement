@@ -145,6 +145,8 @@ int main(int argc, char *argv[]) {
                 }
                 start_line = atoi(startStr);
                 end_line = atoi(endStr);
+                printf("start_line= %d\n", start_line);
+                printf("end_line= %d\n", end_line);
                 if (end_line < start_line) {
                     priorityError[6] = true;
                 } 
@@ -212,10 +214,11 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
-        if (curr_line >= start_line) {
+        if (curr_line >= start_line && curr_line <= end_line) {
+            printf("curr_line: %d\n", curr_line);
             while ((pos = strstr(tmp, search_text)) != NULL) {
-                fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
-                fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
+                // fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
+                // fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
                 size_t n = pos - tmp;
                 char *current;
                 int length = 0;

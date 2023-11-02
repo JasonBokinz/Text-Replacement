@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     /* This block is used to check if the wildcard is valid as well making changes to search_text respectively. */
     bool beginWith = false, endWith = false;
     if ((isWildcard) && (!priorityError[4])) {
-        if ((strncmp(search_text, "*", 1) == 0) ^ (strncmp(search_text + strlen(search_text) - 1, "*", 1) == 0)) {
+        if (((strncmp(search_text, "*", 1) == 0) ^ (strncmp(search_text + strlen(search_text) - 1, "*", 1) == 0)) && (countAsterisks(search_text) == 1)) {
             int len = strlen(search_text);
             /* Store search_text without the begining '*' */
             if (strncmp(search_text, "*", 1) == 0) {
@@ -133,6 +133,7 @@ int main(int argc, char *argv[]) {
                 beginWith = true;
                 search_text[len - 1] = '\0';
             }
+        /* Wildcard is invalid. */
         } else {
             priorityError[7] = true;
         }
@@ -177,6 +178,7 @@ int main(int argc, char *argv[]) {
                     }
                     /* Write into file until point of the beginning of search_text. */
                     fwrite(tmp, 1, n, outfile);
+                    /* If the search_text found is a valid wildard, write the replace_text into file, and shift the pointer. */
                     if (isValid) {
                         char *curr_char = pos;
                         while (*curr_char != '\0' && !isspace(*curr_char) && !ispunct(*curr_char)) {
@@ -184,9 +186,12 @@ int main(int argc, char *argv[]) {
                             length++;
                         }
                         fwrite(replace_text, 1, strlen(replace_text), outfile);
-                        search_len = length;
+                        tmp = pos + length;
+                    /* Not valid so don't replace, just shift the pointer. */
+                    } else {
+                        tmp = pos + search_len;
                     }
-                    tmp = pos + search_len;
+                /* Search_text is ot a wildcard, so search and replace as normal and shift pointer. */
                 } else {
                     fwrite(tmp, 1, n, outfile);
                     fwrite(replace_text, 1, strlen(replace_text), outfile);
@@ -195,6 +200,7 @@ int main(int argc, char *argv[]) {
             }
             /* Write in the rest of the line into the file. */
             fwrite(tmp, 1, strlen(tmp), outfile);
+        /* Line not in range so no search and replace needed. Just write the whole line into the file. */
         } else {
             fputs(line, outfile);
         }

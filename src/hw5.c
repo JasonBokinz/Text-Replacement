@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
     /* This block is used to check if the wildcard is valid as well making changes to search_text respectively. */
     bool beginWith = false, endWith = false;
     if ((isWildcard) && (!priorityError[4])) {
-        if (((strncmp(search_text, "*", 1) == 0) ^ (strncmp(search_text + strlen(search_text) - 1, "*", 1) == 0)) && (countAsterisks(search_text) == 1)) {
+        if ((strncmp(search_text, "*", 1) == 0) ^ (strncmp(search_text + strlen(search_text) - 1, "*", 1) == 0)) {
             int len = strlen(search_text);
             /* Store search_text without the begining '*' */
             if (strncmp(search_text, "*", 1) == 0) {

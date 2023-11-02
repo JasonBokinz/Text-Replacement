@@ -216,6 +216,7 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
+        printf("curr_line: %d\n", curr_line);
         if ((curr_line >= start_line && curr_line <= end_line) || !hasLine) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
                 fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
@@ -265,6 +266,7 @@ int main(int argc, char *argv[]) {
                     tmp = pos + search_len;
                 }
             }
+            printf("Nothing to replace.\n");
             fwrite(tmp, 1, strlen(tmp), outfile);
         } else {
             fputs(line, outfile);

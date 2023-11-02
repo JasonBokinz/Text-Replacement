@@ -217,10 +217,9 @@ int main(int argc, char *argv[]) {
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
         if (curr_line >= start_line && curr_line <= end_line || !hasLine) {
-            printf("curr_line: %d\n", curr_line);
             while ((pos = strstr(tmp, search_text)) != NULL) {
-                // fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
-                // fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
+                fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
+                fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
                 size_t n = pos - tmp;
                 char *current;
                 int length = 0;

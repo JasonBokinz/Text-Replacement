@@ -184,10 +184,9 @@ int main(int argc, char *argv[]) {
                             length++;
                         }
                         fwrite(replace_text, 1, strlen(replace_text), outfile);
-                        tmp = pos + length;
-                    } else {
-                        tmp = pos + search_len;
+                        search_len = length;
                     }
+                    tmp = pos + search_len;
                 } else {
                     fwrite(tmp, 1, n, outfile);
                     fwrite(replace_text, 1, strlen(replace_text), outfile);

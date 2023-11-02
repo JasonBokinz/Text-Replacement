@@ -43,52 +43,52 @@ bool checkIsEnding(char* pos, char* word) {
         return true;
     }
 }
-char* set_text(char* text, char* argv[], int i, int argc) {
-    int count = 0;
-    int k = 0;
-    if (argv[i][0] == '"') {
-        while (i + k < argc) {
-            const char* current_arg = argv[i + k];
-            if (current_arg[strlen(current_arg) - 1] == '"') {
-                // Found the closing double quote
-                count = k + 1;
-                break;
-            }
-            k++;
-        }
-        printf("count: %d\n", count);
-        int len = strlen(argv[i]);
-        if (len > 0) {
-            for (int p = 0; p < len; p++) {
-                argv[i][p] = argv[i][p+1];
-            }
-        }
-        int newLength = 0;
-        for (int j = 0; j < count; j++) {
-            if (j != count - 1) {
-                newLength += 1;
-            }
-            newLength += strlen((argv[i + j]));
-        }
-        newLength -= 1;
-        printf("newLength: %d\n", newLength);
-        char* new_text = (char*)malloc(newLength);
-        new_text[0] = '\0';
-        for (int j = 0; j < count; j++) {
-            strcat(new_text, (argv[i + j]));
-            if (j != count - 1) {
-                strcat(new_text, " ");
-            } else {
-                new_text[strlen(new_text)-1] = '\0';
-                printf("new_text length: %lu\n", strlen(new_text));
-            }
-        }
-        text = new_text;
-    } else {
-        text = argv[i];
-    }
-    return text;
-}
+// char* set_text(char* text, char* argv[], int i, int argc) {
+//     int count = 0;
+//     int k = 0;
+//     if (argv[i][0] == '"') {
+//         while (i + k < argc) {
+//             const char* current_arg = argv[i + k];
+//             if (current_arg[strlen(current_arg) - 1] == '"') {
+//                 // Found the closing double quote
+//                 count = k + 1;
+//                 break;
+//             }
+//             k++;
+//         }
+//         printf("count: %d\n", count);
+//         int len = strlen(argv[i]);
+//         if (len > 0) {
+//             for (int p = 0; p < len; p++) {
+//                 argv[i][p] = argv[i][p+1];
+//             }
+//         }
+//         int newLength = 0;
+//         for (int j = 0; j < count; j++) {
+//             if (j != count - 1) {
+//                 newLength += 1;
+//             }
+//             newLength += strlen((argv[i + j]));
+//         }
+//         newLength -= 1;
+//         printf("newLength: %d\n", newLength);
+//         char* new_text = (char*)malloc(newLength);
+//         new_text[0] = '\0';
+//         for (int j = 0; j < count; j++) {
+//             strcat(new_text, (argv[i + j]));
+//             if (j != count - 1) {
+//                 strcat(new_text, " ");
+//             } else {
+//                 new_text[strlen(new_text)-1] = '\0';
+//                 printf("new_text length: %lu\n", strlen(new_text));
+//             }
+//         }
+//         text = new_text;
+//     } else {
+//         text = argv[i];
+//     }
+//     return text;
+// }
 bool checkIsBeginning(char* tmp, char* pos) {
         if (pos - 1 >= tmp) {
             printf("\ncheckIsBeginning:\n");
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(argv[i], "-r") == 0){
             numR++;
             if ((i + 1 < argc) && (strncmp(argv[i + 1], "-", 1) != 0)) {
-                replace_text = set_text(replace_text, argv, i+1, argc);
+                replace_text = argv[i+1];
             } else {
                 priorityError[5] = true;
             }
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
-        if (curr_line >= start_line) {
+        if (curr_line >= start_line && curr_line <= end_line) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
                 fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
                 fprintf(stderr,"\npos from beginning: |%c|\n", *pos);

@@ -102,6 +102,7 @@ bool checkIsBeginning(char* tmp, char* pos) {
 // Have an error where each index is an error and return the error at the very end
 int main(int argc, char *argv[]) {
     bool isWildcard = false;
+    bool hasLine = false;
     bool priorityError[9] = {false};
     int numS = 0, numR = 0, numL = 0, numW = 0;
     if (argc < 7) {
@@ -131,6 +132,7 @@ int main(int argc, char *argv[]) {
             }
         } else if (strcmp(argv[i], "-l") == 0) {
             numL++;
+            hasLine = true;
             if ((i + 1 < argc) && (strncmp(argv[i + 1], "-", 1) != 0)) {
                 const char s = ',';
                 char* startStr = strtok(argv[i+1], &s);
@@ -214,7 +216,7 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
-        if (curr_line >= start_line && curr_line <= end_line) {
+        if (curr_line >= start_line && curr_line <= end_line || !hasLine) {
             printf("curr_line: %d\n", curr_line);
             while ((pos = strstr(tmp, search_text)) != NULL) {
                 // fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);

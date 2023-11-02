@@ -36,6 +36,9 @@ int main(int argc, char *argv[]) {
     if (argc < 7) {
         priorityError[0] = true;
     }
+    for (int i = 0; i < argc; i++) {
+        printf("%s\n", argv[i]);
+    }
     char* search_text = NULL, *replace_text = NULL;
     int start_line = 0, end_line = 0;
     for (int i = 0; i < argc; i++) {
@@ -69,8 +72,9 @@ int main(int argc, char *argv[]) {
                     priorityError[6] = true;
                     continue;
                 }
-                start_line = atoi(startStr);
-                end_line = atoi(endStr);
+                char *ptr;
+                start_line = strtol(startStr, &ptr, 10);
+                end_line = atoi(endStr, &ptr, 10);
                 hasLine = true;
                 if (end_line < start_line) {
                     priorityError[6] = true;
@@ -134,14 +138,10 @@ int main(int argc, char *argv[]) {
         if ((curr_line >= start_line && curr_line <= end_line) || !hasLine) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
                 size_t n = pos - tmp;
-                char *current;
                 int length = 0;
                 bool isValid = true;
                 if (beginWith || endWith) {
-                    if (endWith && !checkIsEnding(pos, search_text)) {
-                        n += search_len;
-                        isValid = false;
-                    } else if (beginWith && !checkIsBeginning(tmp, pos)) {
+                    if ((endWith && !checkIsEnding(pos, search_text)) || (beginWith && !checkIsBeginning(tmp, pos))) {
                         n += search_len;
                         isValid = false;
                     }
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
                         n -= findBeginning(tmp, pos);
                     }
                     fwrite(tmp, 1, n, outfile);
-                    current = pos;
+                    char *current = pos;
                     while (*current != '\0' && !isspace(*current) && !ispunct(*current)) {
                         current++;
                         length++;

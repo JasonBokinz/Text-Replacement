@@ -132,7 +132,6 @@ int main(int argc, char *argv[]) {
             }
         } else if (strcmp(argv[i], "-l") == 0) {
             numL++;
-            hasLine = true;
             if ((i + 1 < argc) && (strncmp(argv[i + 1], "-", 1) != 0)) {
                 const char s = ',';
                 char* startStr = strtok(argv[i+1], &s);
@@ -147,6 +146,7 @@ int main(int argc, char *argv[]) {
                 }
                 start_line = atoi(startStr);
                 end_line = atoi(endStr);
+                hasLine = true;
                 printf("start_line= %d\n", start_line);
                 printf("end_line= %d\n", end_line);
                 if (end_line < start_line) {
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
-        if (curr_line >= start_line && curr_line <= end_line || !hasLine) {
+        if ((curr_line >= start_line && curr_line <= end_line) || !hasLine) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
                 fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
                 fprintf(stderr,"\npos from beginning: |%c|\n", *pos);

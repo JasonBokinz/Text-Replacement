@@ -2,27 +2,7 @@
 
 int handleError(int i) {
     int errors[8] = {MISSING_ARGUMENT, DUPLICATE_ARGUMENT, INPUT_FILE_MISSING, OUTPUT_FILE_UNWRITABLE, S_ARGUMENT_MISSING, R_ARGUMENT_MISSING, L_ARGUMENT_INVALID, WILDCARD_INVALID};
-    char* s;
-    int error = errors[i];
-    if (error == MISSING_ARGUMENT) {
-        s = "MISSING_ARGUMENT";
-    } else if (error == DUPLICATE_ARGUMENT) {
-        s = "DUPLICATE_ARGUMENT";
-    } else if (error == INPUT_FILE_MISSING) {
-        s = "INPUT_FILE_MISSING";
-    } else if (error == OUTPUT_FILE_UNWRITABLE) {
-        s = "OUTPUT_FILE_UNWRITABLE";
-    } else if (error == S_ARGUMENT_MISSING) {
-        s = "S_ARGUMENT_MISSING";
-    } else if (error == R_ARGUMENT_MISSING) {
-        s = "R_ARGUMENT_MISSING";
-    } else if (error == L_ARGUMENT_INVALID) {
-        s = "L_ARGUMENT_INVALID";
-    } else {
-        s = "WILDCARD_INVALID";
-    }
-    fprintf(stderr, "Error: %s\n",s);
-    return error;
+    return errors[i];
 }
 int findBeginning(char* tmp, char* pos) {
     int count = 0; // Initialize a count to track the number of characters moved
@@ -35,9 +15,6 @@ int findBeginning(char* tmp, char* pos) {
 bool checkIsEnding(char* pos, char* word) {
     pos += strlen(word) - 1;
     if (*(pos+1) != '\0') {
-        printf("\ncheckIsEnding:\n");
-        printf("pos=%c\n", *pos);
-        printf("pos+1=%c\n\n", *(pos+1));
         return isspace(*(pos+1)) || ispunct(*(pos+1));
     } else {
         return true;
@@ -45,9 +22,6 @@ bool checkIsEnding(char* pos, char* word) {
 }
 bool checkIsBeginning(char* tmp, char* pos) {
         if (pos - 1 >= tmp) {
-            printf("\ncheckIsBeginning:\n");
-            printf("pos=%c\n", *pos);
-            printf("pos-1=%c\n\n", *(pos-1));
             return isspace(*(pos-1)) || ispunct(*(pos-1));
         } else {
             return true;
@@ -61,9 +35,6 @@ int main(int argc, char *argv[]) {
     int numS = 0, numR = 0, numL = 0, numW = 0;
     if (argc < 7) {
         priorityError[0] = true;
-    }
-    for (int i = 0; i < argc; i++) {
-        printf("%s\n", argv[i]);
     }
     char* search_text = NULL, *replace_text = NULL;
     int start_line = 0, end_line = 0;
@@ -101,8 +72,6 @@ int main(int argc, char *argv[]) {
                 start_line = atoi(startStr);
                 end_line = atoi(endStr);
                 hasLine = true;
-                printf("start_line= %d\n", start_line);
-                printf("end_line= %d\n", end_line);
                 if (end_line < start_line) {
                     priorityError[6] = true;
                 } 
@@ -139,15 +108,7 @@ int main(int argc, char *argv[]) {
             priorityError[7] = true;
         }
     }
-    fprintf(stderr, "search_text: %s\n", search_text);
-    fprintf(stderr, "replace_text: %s\n", replace_text);
     //open infile for reading if possible
-    const char* inputf = argv[argc-2];
-    const char* outputf = argv[argc-1];
-    fprintf(stderr,"inputFile: %s\n", inputf);
-    fprintf(stderr,"outputFile: %s\n", outputf);
-    fprintf(stderr,"beginWith: %d\n", beginWith);
-    fprintf(stderr,"endWith: %d\n", endWith);
     FILE* infile = fopen(argv[argc-2], "r");
     // Check for error: INPUT_FILE_MISSING 
     if (infile == NULL) {
@@ -170,11 +131,8 @@ int main(int argc, char *argv[]) {
     size_t search_len = strlen(search_text);
     while (fgets(line, sizeof(line), infile) != NULL) {
         char *pos, *tmp = line;
-        printf("curr_line: %d\n", curr_line);
         if ((curr_line >= start_line && curr_line <= end_line) || !hasLine) {
             while ((pos = strstr(tmp, search_text)) != NULL) {
-                fprintf(stderr,"\ntmp from beginning: |%c|\n", *tmp);
-                fprintf(stderr,"\npos from beginning: |%c|\n", *pos);
                 size_t n = pos - tmp;
                 char *current;
                 int length = 0;
@@ -183,31 +141,19 @@ int main(int argc, char *argv[]) {
                     if (endWith && !checkIsEnding(pos, search_text)) {
                         n += search_len;
                         isValid = false;
-                        fprintf(stderr, "\ntmp=%c\n", *tmp);
-                        fprintf(stderr, "Not valid ending\n");
                     } else if (beginWith && !checkIsBeginning(tmp, pos)) {
                         n += search_len;
                         isValid = false;
-                        fprintf(stderr, "\ntmp=%c\n", *tmp);
-                        fprintf(stderr, "Not valid beginning\n");
                     }
                     else if (endWith && checkIsEnding(pos, search_text)) {
                         n -= findBeginning(tmp, pos);
                     }
-                    fprintf(stderr, "Valid Wildcard\n");
-                    fprintf(stderr, "tmp to n: |");
-                    fwrite(tmp, 1, n, stderr);
-                    fprintf(stderr, "|\n");
                     fwrite(tmp, 1, n, outfile);
                     current = pos;
-                    fprintf(stderr, "\ncharacters when looking for length: ");
                     while (*current != '\0' && !isspace(*current) && !ispunct(*current)) {
-                        fprintf(stderr,"%c", *current);
                         current++;
                         length++;
                     }
-                    fprintf(stderr, "|\n");
-                    fprintf(stderr, "length:%d\n", length);
                     if (isValid) {
                         fwrite(replace_text, 1, strlen(replace_text), outfile);
                         tmp = pos + length;
@@ -220,7 +166,6 @@ int main(int argc, char *argv[]) {
                     tmp = pos + search_len;
                 }
             }
-            printf("Nothing to replace.\n");
             fwrite(tmp, 1, strlen(tmp), outfile);
         } else {
             fputs(line, outfile);
